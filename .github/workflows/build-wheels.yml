@@ -4,7 +4,7 @@ on:
   push:
     branches: [ main ]
     tags:
-      - "v*"               # optional; still only builds
+      - "v*"  
   pull_request:
   workflow_dispatch:
 
@@ -21,13 +21,13 @@ jobs:
         os: [ubuntu-24.04, macos-14, windows-latest]
 
     env:
-      # Python versions to target
-      CIBW_BUILD: "cp39-* cp310-* cp311-* cp312-* cp313-*"
+      #py versions
+      CIBW_BUILD: "cp310-* cp311-* cp312-*"
       CIBW_SKIP: "pp* *musllinux*"
 
       # Architectures
       CIBW_ARCHS_LINUX: "x86_64 aarch64"
-      CIBW_ARCHS_MACOS: "x86_64 arm64"     # or "universal2" if suitable
+      CIBW_ARCHS_MACOS: "x86_64 arm64" 
       CIBW_ARCHS_WINDOWS: "AMD64"
 
       # Modern manylinux policy
