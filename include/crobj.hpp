@@ -4,6 +4,7 @@
 #include <cmath>
 #include <iostream>
 #include <memory>
+#include <string>
 
 // Consider for CRSUM shift: NTT/FFT binomial transform
 // for shift array P[q]/q! = \sum^{\min(q,n-1)}_k=0 A_0[k]_k! \cdot 1/(q-k)!
