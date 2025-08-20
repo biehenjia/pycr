@@ -57,7 +57,13 @@ jobs:
       - name: Build sdist
         if: matrix.os == 'ubuntu-24.04'
         run: python -m build --sdist
-
+      
+      - name: Set up QEMU (Linux)
+        if: runner.os == 'Linux'
+        uses: docker/setup-qemu-action@v3
+        with:
+          platforms: arm64
+      
       - name: Build wheels with cibuildwheel
         run: python -m cibuildwheel --output-dir wheelhouse
 
