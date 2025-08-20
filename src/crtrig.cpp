@@ -4,7 +4,7 @@
 #include "crnum.hpp"
 #include "crprod.hpp"
 
-CRtrig::CRtrig(ssize_t i, oc t, size_t l)
+CRtrig::CRtrig(int i, oc t, size_t l)
 {
     length = l;
     trigtype = t;
@@ -196,7 +196,7 @@ void CRtrig::print_tree() const
     std::cout << ")";
 }
 
-std::string CRtrig::genCode(size_t parent, size_t order, ssize_t place, std::string indent) const
+std::string CRtrig::genCode(size_t parent, size_t order, int place, std::string indent) const
 {
     std::string res;
 

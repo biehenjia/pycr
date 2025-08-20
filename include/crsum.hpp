@@ -4,8 +4,8 @@
 
 class CRsum final: public CRobj {
     public: 
-        CRsum(ssize_t i, size_t l); 
-        CRsum(ssize_t i, double x, double h);
+        CRsum(int i, size_t l); 
+        CRsum(int i, double x, double h);
         
         std::unique_ptr<CRobj> add(const CRobj& target) const override;
         std::unique_ptr<CRobj> mul(const CRobj& target) const override;
@@ -22,7 +22,7 @@ class CRsum final: public CRobj {
         void print_tree() const override;
         void simplify() override;
         
-        std::string genCode(size_t parent, size_t index, ssize_t place,std::string indent) const override;
+        std::string genCode(size_t parent, size_t index, int place,std::string indent) const override;
         
         std::unique_ptr<CRobj> copy() const override;
 

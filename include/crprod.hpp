@@ -3,7 +3,7 @@
 
 class CRprod final:public CRobj {
     public: 
-        CRprod(ssize_t i, size_t l);
+        CRprod(int i, size_t l);
         
         std::unique_ptr<CRobj> add(const CRobj& target) const override;
         std::unique_ptr<CRobj> mul(const CRobj& target) const override;
@@ -30,7 +30,7 @@ class CRprod final:public CRobj {
             }
         }
         void print_tree() const override;
-        std::string genCode(size_t parent, size_t index, ssize_t place,std::string indent) const override;
+        std::string genCode(size_t parent, size_t index, int place,std::string indent) const override;
 
 
 

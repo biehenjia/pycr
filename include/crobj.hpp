@@ -16,6 +16,8 @@ class CRprod;
 class CRtrig;
 class CRexpr;
 
+using ull = unsigned long long;
+
 inline double choose (double n, double k){ 
     double result = 1;
     for (size_t i = 1; i <= k; i++){ 
@@ -80,7 +82,7 @@ class CRobj {
     
         std::vector<std::unique_ptr<CRobj>> operands;
 
-        virtual std::string genCode(size_t parent, size_t index, ssize_t place, std::string indent) const = 0;
+        virtual std::string genCode(size_t parent, size_t index, int place, std::string indent) const = 0;
         std::string prepare( CRobj& root);
 
         std::vector<double> fastvalues;
@@ -90,8 +92,8 @@ class CRobj {
         size_t length;
         bool initialized = false;
         size_t crcount = 0;
-        ssize_t crposition;
-        ssize_t index;
+        int crposition;
+        int index;
 
         std::string crprefix = "A";
 };

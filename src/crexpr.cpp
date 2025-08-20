@@ -138,7 +138,7 @@ void CRexpr::print_tree() const {
 
 std::string CRexpr::genCode(size_t parent,
                             size_t order,
-                            ssize_t place,
+                            int place,
                             std::string indent) const
 {
     std::string res;
