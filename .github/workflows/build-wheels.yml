@@ -26,33 +26,33 @@ jobs:
       CIBW_BUILD: "cp310-* cp311-* cp312-*"
       CIBW_SKIP: "pp* *musllinux*"
 
-      # Architectures
+      # architectures
       CIBW_ARCHS_LINUX: "x86_64 aarch64"
       CIBW_ARCHS_MACOS: "x86_64 arm64" 
       CIBW_ARCHS_WINDOWS: "AMD64"
 
-      # Modern manylinux policy
+      # manylinux policy
       CIBW_MANYLINUX_X86_64: "manylinux_2_28"
       CIBW_MANYLINUX_AARCH64: "manylinux_2_28"
 
-      # Optional: run tests inside built wheels
       # CIBW_TEST_REQUIRES: "pytest"
       # CIBW_TEST_COMMAND: "pytest -q {project}/tests"
 
       # Parallel CMake
       CMAKE_BUILD_PARALLEL_LEVEL: "2"
 
-      CIBW_ENVIRONMENT_MACOS: >-
-        CFLAGS="-O3 -DNDEBUG"
-        CXXFLAGS="-O3 -DNDEBUG"
+      CIBW_ENVIRONMENT_MACOS: >
         MACOSX_DEPLOYMENT_TARGET=11.0
-        SKBUILD_CMAKE_ARGS="-DCMAKE_BUILD_TYPE=Release -DCMAKE_C_FLAGS_RELEASE=-O3\ -DNDEBUG -DCMAKE_CXX_FLAGS_RELEASE=-O3\ -DNDEBUG"
-      # (Optional but recommended so Linux/Windows match)
-      CIBW_ENVIRONMENT_LINUX: >-
         CFLAGS="-O3 -DNDEBUG"
         CXXFLAGS="-O3 -DNDEBUG"
         SKBUILD_CMAKE_ARGS="-DCMAKE_BUILD_TYPE=Release -DCMAKE_C_FLAGS_RELEASE=-O3\ -DNDEBUG -DCMAKE_CXX_FLAGS_RELEASE=-O3\ -DNDEBUG"
-      CIBW_ENVIRONMENT_WINDOWS: >-
+
+      CIBW_ENVIRONMENT_LINUX: >
+        CFLAGS="-O3 -DNDEBUG"
+        CXXFLAGS="-O3 -DNDEBUG"
+        SKBUILD_CMAKE_ARGS="-DCMAKE_BUILD_TYPE=Release -DCMAKE_C_FLAGS_RELEASE=-O3\ -DNDEBUG -DCMAKE_CXX_FLAGS_RELEASE=-O3\ -DNDEBUG"
+
+      CIBW_ENVIRONMENT_WINDOWS: >
         CFLAGS="/O2 /DNDEBUG"
         CXXFLAGS="/O2 /DNDEBUG"
         SKBUILD_CMAKE_ARGS="-DCMAKE_BUILD_TYPE=Release"
@@ -69,7 +69,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install cibuildwheel build
 
-      # Build sdist once on Linux
+      #sdist linux
       - name: Build sdist
         if: matrix.os == 'ubuntu-24.04'
         run: python -m build --sdist
