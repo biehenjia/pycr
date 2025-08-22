@@ -14,7 +14,7 @@ cmake.version = ">=3.26"
 ninja.version = ">=1.11"
 build-dir = "build/{wheel_tag}"
 wheel.packages = ["py_cr"]
-build-type = "Release"
+
 
 
 [tool.cibuildwheel.linux]
