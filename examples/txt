@@ -1,0 +1,55 @@
+Set-Content -Path .\inspect_ns.py -Encoding utf8 -Value @'
+import sys, os, glob, importlib, pkgutil
+
+print("Python:", sys.version)
+try:
+    import py_cr as pkg
+except Exception as e:
+    print("Import pkg failed:", e)
+    raise
+
+print("Has __file__? ", hasattr(pkg, "__file__"), "value:", getattr(pkg, "__file__", None))
+print("Has __path__? ", hasattr(pkg, "__path__"))
+if hasattr(pkg, "__path__"):
+    print("pkg.__path__ entries:", list(pkg.__path__))
+
+# Try to import a submodule named _core (common for pybind11)
+try:
+    core = importlib.import_module("py_cr._core")
+    print("\nImported submodule: py_chains_of_recurrences._core")
+    print("core file:", getattr(core, "__file__", None))
+    print("Has ASTvar?", hasattr(core, "ASTvar"))
+    if hasattr(core, "ASTvar"):
+        print("Type(ASTvar):", type(core.ASTvar))
+except Exception as e:
+    print("\nSubmodule import failed (py_chains_of_recurrences._core):", e)
+
+# If that failed, see if a TOP-LEVEL extension named _core exists
+try:
+    tl = importlib.import_module("_core")
+    print("\nImported top-level module: _core")
+    print("file:", getattr(tl, "__file__", None))
+    print("Has ASTvar?", hasattr(tl, "ASTvar"))
+except Exception as e:
+    print("\nTop-level _core import failed:", e)
+
+# Find any .pyd files related to this package on sys.path
+print("\nSearching for .pyd files related to this package...")
+roots = []
+if hasattr(pkg, "__path__"):
+    roots.extend(list(pkg.__path__))
+for p in sys.path:
+    if "site-packages" in p.lower():
+        roots.append(p)
+seen = set()
+for root in roots:
+    if not isinstance(root, str) or not os.path.isdir(root): 
+        continue
+    for f in glob.glob(os.path.join(root, "**", "*.pyd"), recursive=True):
+        name = os.path.basename(f)
+        if "chains" in name or "core" in name or "recurr" in name:
+            if f not in seen:
+                print("  pyd:", f)
+                seen.add(f)
+'@
+python .\inspect_ns.py

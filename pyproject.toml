@@ -4,7 +4,7 @@ build-backend = "scikit_build_core.build"
 
 [project]
 name = "py_chains_of_recurrences"
-version = "0.1b1"
+version = "0.1b2"
 description = "A chains of recurrences library for python"
 readme = "README.md"
 requires-python = ">=3.10"
