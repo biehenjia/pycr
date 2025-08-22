@@ -4,7 +4,7 @@ build-backend = "scikit_build_core.build"
 
 [project]
 name = "py_chains_of_recurrences"
-version = "0.1b3"
+version = "0.1b4"
 description = "A chains of recurrences library for python"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -14,3 +14,7 @@ cmake.version = ">=3.26"
 ninja.version = ">=1.11"
 build-dir = "build/{wheel_tag}"
 wheel.packages = ["py_cr"]
+
+[tool.cibuildwheel.linux]
+build-verbosity = 3
+environment = { CMAKE_BUILD_TYPE="Release", CFLAGS="$CFLAGS -O3 -DNDEBUG", CXXFLAGS="$CXXFLAGS -O3 -DNDEBUG" }
