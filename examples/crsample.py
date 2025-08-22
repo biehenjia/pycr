@@ -21,11 +21,11 @@ or construct minimal python code
 '''
 
 e = "x^2+x^2+x^2+x^4+x^5+x^6+x^7+x^8"
-params = ["x,1,1,10000"]
+params = ["x,1,1,1000000"]
 
 print(10000000.0**2+2*10000000+4)
-code,t = pycr.crgen(e,params)
-print(code)
+code,t = pycr.evalcr(e,params)
+
 # print(code)
 print(f"{t} ms for code evaluation")
 
