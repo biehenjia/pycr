@@ -1,3 +1,5 @@
+message(STATUS "CMAKE_BUILD_TYPE='${CMAKE_BUILD_TYPE}'")
+
 cmake_minimum_required(VERSION 3.18)
 project(py_cr LANGUAGES CXX)
 
