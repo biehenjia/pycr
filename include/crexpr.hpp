@@ -20,9 +20,9 @@ class CRexpr final: public CRobj {
 
         std::unique_ptr<CRobj> copy() const override;
         void print_tree() const override;
-        std::string genCode(size_t parent, size_t index, int place,std::string indent) const override;
+        std::string genCode(size_t parent, long long index, long long place,std::string indent) const override;
         double valueof() const override;
-        void shift(size_t i) override final {
+        void shift(long long i) override final {
             
             for (size_t j = 0; j < isanumber.size(); j++){ 
                 operands[isanumber[j]]->shift(i);

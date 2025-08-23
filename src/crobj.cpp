@@ -53,7 +53,7 @@ void CRobj::simplify()
     }
 }
 
-void CRobj::shift(size_t index)
+void CRobj::shift(long long index)
 {
     return;
 }

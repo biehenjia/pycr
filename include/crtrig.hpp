@@ -3,7 +3,7 @@
 
 class CRtrig final: public CRobj { 
     public:
-        CRtrig(int i, oc t, size_t l);
+        CRtrig(long long i, oc t, size_t l);
 
         std::unique_ptr<CRobj> add(const CRobj& target) const override;
         std::unique_ptr<CRobj> mul(const CRobj& target) const override;
@@ -17,7 +17,7 @@ class CRtrig final: public CRobj {
 
         void simplify() override; 
         std::unique_ptr<CRobj> copy() const override;
-        void shift(size_t i) override final{
+        void shift(long long i) override final{
             if (index != i){ 
                 for (size_t j = 0; j < isanumber.size(); j++){ 
                     operands[isanumber[j]]->shift(i);
@@ -41,7 +41,7 @@ class CRtrig final: public CRobj {
         // double initialize();
         double valueof() const;
         void print_tree() const override;
-        std::string genCode(size_t parent, size_t index, int place,std::string indent) const override;
+        std::string genCode(size_t parent, long long index, long long place,std::string indent) const override;
 
         oc trigtype;
         std::unique_ptr<CRobj> correctt(size_t nl) const;

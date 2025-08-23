@@ -75,6 +75,6 @@ void CRnum::print_tree() const {
     std::cout << "CRnum("<<value<<")";
 }
 
-std::string CRnum::genCode(size_t parent, size_t order, int place,std::string indent) const {
+std::string CRnum::genCode(size_t parent, long long order, long long place,std::string indent) const {
     return "";
 }

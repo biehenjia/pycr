@@ -1,16 +1,4 @@
-
-
 #pragma once
-
-#ifdef PYCRLIB_ENFORCE_OPT
-  #if !defined(__OPTIMIZE__) || defined(__OPTIMIZE_SIZE__)
-    #error "Wheel build must be optimized (-O2/-O3)."
-  #endif
-  #ifndef NDEBUG
-    #error "Wheel build must define NDEBUG."
-  #endif
-#endif
-
 #include <vector>
 #include <algorithm>
 #include <cmath>
@@ -27,8 +15,6 @@ class CRnum;
 class CRprod;
 class CRtrig;
 class CRexpr;
-
-using ull = unsigned long long;
 
 inline double choose (double n, double k){ 
     double result = 1;
@@ -65,7 +51,8 @@ inline void shiftsum(T* __restrict a, std::size_t n, T* __restrict out, std::siz
 
 class CRobj {
     public:
-        CRobj(){}; 
+        CRobj(){};
+        //initialize with length
         CRobj(size_t l);
         virtual ~CRobj() =default ;
 
@@ -90,11 +77,12 @@ class CRobj {
         
         virtual void print_tree() const = 0;
 
-        virtual void shift(size_t index);
+        virtual void shift(long long index);
     
         std::vector<std::unique_ptr<CRobj>> operands;
 
-        virtual std::string genCode(size_t parent, size_t index, int place, std::string indent) const = 0;
+        //parent it belongs to, index of the shift, index in the parent's array
+        virtual std::string genCode(size_t parent, long long index, long long place, std::string indent) const = 0;
         std::string prepare( CRobj& root);
 
         std::vector<double> fastvalues;
@@ -104,8 +92,8 @@ class CRobj {
         size_t length;
         bool initialized = false;
         size_t crcount = 0;
-        int crposition;
-        int index;
+        long long crposition;
+        long long index;
 
         std::string crprefix = "A";
 };

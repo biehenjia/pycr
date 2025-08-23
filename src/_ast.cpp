@@ -2,7 +2,6 @@
 #include "crsum.hpp"
 #include "crnum.hpp"
 #include "chrono"
-#include "profile.hpp"
 /*
 in python, we construct the AST, and each symbolic node (variable) is initialized with
 the proper start and step and index. Then, we call crinit that passes the number of evaluations
@@ -360,7 +359,7 @@ void ASTnode::_creval()
         }
 
         // 3) advance the odometer
-        int i = paramsize;
+        ssize_t i = paramsize;
         while (i >= 0) {
             ind[i]++;
             if (ind[i] < params[i]) {

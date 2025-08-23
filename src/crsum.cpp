@@ -4,7 +4,7 @@
 #include "crprod.hpp"
 #include "crtrig.hpp"
 
-CRsum::CRsum(int i, size_t l)
+CRsum::CRsum(long long i, size_t l)
 {
     index = i;
     length = l;
@@ -12,7 +12,7 @@ CRsum::CRsum(int i, size_t l)
     auxiliary.resize(length);
 }
 
-CRsum::CRsum(int i, double x, double h)
+CRsum::CRsum(long long i, double x, double h)
 {
     length = 2;
     index = i;
@@ -283,11 +283,10 @@ void CRsum::print_tree() const
     std::cout << ")";
 }
 
-std::string CRsum::genCode(size_t parent, size_t order, int place, std::string indent) const
+std::string CRsum::genCode(size_t parent, long long order, long long place, std::string indent) const
 {
-    std::cout<<"THIS IS A NEW VERSION\n";
     std::string res;
-    std::cout<<order<< " " <<index<< std::endl;
+    std::cout<<order<<" "<<index<<std::endl;
     if (order != index)
     {
         for (size_t i = 0; i < operands.size(); ++i)
@@ -300,7 +299,6 @@ std::string CRsum::genCode(size_t parent, size_t order, int place, std::string i
     }
     else
     {
-        std::cout<<operands.size() <<std::endl;
         size_t n = operands.size();
         // loop header
         res += indent + "for i in range(" + std::to_string(n - 1) + "):\n";

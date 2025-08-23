@@ -3,6 +3,7 @@
 
 class CRnum final: public CRobj {
     public:
+        //initialize with value, index is -1
         CRnum(double v);
         std::unique_ptr<CRobj> add(const CRobj& target) const override;
         std::unique_ptr<CRobj> mul(const CRobj& target)  const override;
@@ -20,9 +21,9 @@ class CRnum final: public CRobj {
         double valueof() const;
         bool isnumber() const override;
         void print_tree() const override;
-        std::string genCode(size_t parent, size_t index, int place,std::string indent) const override;
+        std::string genCode(size_t parent, long long index, long long place,std::string indent) const override;
 
-        void shift(size_t index) override final {
+        void shift(long long index) override final {
             return;
         }
         double value;

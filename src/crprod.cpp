@@ -3,7 +3,7 @@
 #include "crnum.hpp"
 #include "crsum.hpp"
 
-CRprod::CRprod(int i, size_t l)
+CRprod::CRprod(long long i, size_t l)
 {
     length = l;
     operands.resize(l);
@@ -242,7 +242,7 @@ void CRprod::print_tree() const
     std::cout << ")";
 }
 
-std::string CRprod::genCode(size_t parent,size_t order,int place,std::string indent) const
+std::string CRprod::genCode(size_t parent,size_t order,long long place,std::string indent) const
 {
     std::string res;
 

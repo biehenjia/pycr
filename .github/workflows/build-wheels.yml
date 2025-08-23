@@ -38,7 +38,7 @@ jobs:
           CIBW_MANYLINUX_X86_64_IMAGE: "manylinux_2_28"
         run: python -m cibuildwheel --output-dir dist
 
-      - name: Build sdist (once)
+      - name: Build sdist (Linux only)
         if: runner.os == 'Linux'
         run: python -m build --sdist -o dist
 
@@ -47,8 +47,20 @@ jobs:
           name: dist-${{ matrix.os }}
           path: dist/*
 
-      - name: Publish to PyPI (Trusted Publisher)
-        if: startsWith(github.ref, 'refs/tags/v') && runner.os == 'Linux'
+  publish:
+    name: Publish to PyPI
+    needs: build
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: dist-*
+          merge-multiple: true
+          path: dist
+
+      - name: Publish (Trusted Publisher)
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
           packages_dir: dist

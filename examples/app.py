@@ -1,230 +1,57 @@
-import streamlit as st
+import streamlit
+import pandas as pd
+import pycr
 
-def intro():
-    import streamlit as st
 
-    st.write("# Welcome to Streamlit! 👋")
-    st.sidebar.success("Select a demo above.")
 
-    st.markdown(
-        """
-        Streamlit is an open-source app framework built specifically for
-        Machine Learning and Data Science projects.
+streamlit.title("Chains of Recurrences")
+streamlit.markdown("Chains of Recurrences (CR's) is an effective method to evaluate functions at regular intervals. For example, a common task is to evaluate $G(x_0 +ih),\\forall 0 \\leq i \\leq s$ for some $x_0,h,s$ in the purposes of: graph plotting, signal processing, activation function approximation, etc.")
+streamlit.markdown("This website serves as a demonstration of using CR's, built in `python` and `c++`.")
+streamlit.header("Benchmarking")
+streamlit.markdown("Input a univariate expression to benchmark evaluation time against alternatives. Input the expression to be evaluated on the right, and the associated cycle variable on the left. For example, input $x^2+x+2$ for the expression, with cycle variable $x$.")
 
-        **👈 Select a demo from the dropdown on the left** to see some examples
-        of what Streamlit can do!
+benchmark1, benchmark2 = streamlit.columns(2)
+benchexpr = benchmark1.text_input("Expression: $f(x)$")
+benchcycle = benchmark2.text_input("Cycle variable: ")
 
-        ### Want to learn more?
-
-        - Check out [streamlit.io](https://streamlit.io)
-        - Jump into our [documentation](https://docs.streamlit.io)
-        - Ask a question in our [community
-          forums](https://discuss.streamlit.io)
-
-        ### See more complex demos
-
-        - Use a neural net to [analyze the Udacity Self-driving Car Image
-          Dataset](https://github.com/streamlit/demo-self-driving)
-        - Explore a [New York City rideshare dataset](https://github.com/streamlit/demo-uber-nyc-pickups)
-    """
-    )
-
-def mapping_demo():
-    import streamlit as st
-    import pandas as pd
-    import pydeck as pdk
-
-    from urllib.error import URLError
-
-    st.markdown(f"# {list(page_names_to_funcs.keys())[2]}")
-    st.write(
-        """
-        This demo shows how to use
-[`st.pydeck_chart`](https://docs.streamlit.io/develop/api-reference/charts/st.pydeck_chart)
-to display geospatial data.
-"""
-    )
-
-    @st.cache_data
-    def from_data_file(filename):
-        url = (
-            "http://raw.githubusercontent.com/streamlit/"
-            "example-data/master/hello/v1/%s" % filename
-        )
-        return pd.read_json(url)
-
+if streamlit.button("Benchmark Expression"):
+    data = []
     try:
-        ALL_LAYERS = {
-            "Bike Rentals": pdk.Layer(
-                "HexagonLayer",
-                data=from_data_file("bike_rental_stats.json"),
-                get_position=["lon", "lat"],
-                radius=200,
-                elevation_scale=4,
-                elevation_range=[0, 1000],
-                extruded=True,
-            ),
-            "Bart Stop Exits": pdk.Layer(
-                "ScatterplotLayer",
-                data=from_data_file("bart_stop_stats.json"),
-                get_position=["lon", "lat"],
-                get_color=[200, 30, 0, 160],
-                get_radius="[exits]",
-                radius_scale=0.05,
-            ),
-            "Bart Stop Names": pdk.Layer(
-                "TextLayer",
-                data=from_data_file("bart_stop_stats.json"),
-                get_position=["lon", "lat"],
-                get_text="name",
-                get_color=[0, 0, 0, 200],
-                get_size=15,
-                get_alignment_baseline="'bottom'",
-            ),
-            "Outbound Flow": pdk.Layer(
-                "ArcLayer",
-                data=from_data_file("bart_path_stats.json"),
-                get_source_position=["lon", "lat"],
-                get_target_position=["lon2", "lat2"],
-                get_source_color=[200, 30, 0, 160],
-                get_target_color=[200, 30, 0, 160],
-                auto_highlight=True,
-                width_scale=0.0001,
-                get_width="outbound",
-                width_min_pixels=3,
-                width_max_pixels=30,
-            ),
-        }
-        st.sidebar.markdown("### Map Layers")
-        selected_layers = [
-            layer
-            for layer_name, layer in ALL_LAYERS.items()
-            if st.sidebar.checkbox(layer_name, True)
-        ]
-        if selected_layers:
-            st.pydeck_chart(
-                pdk.Deck(
-                    map_style="mapbox://styles/mapbox/light-v9",
-                    initial_view_state={
-                        "latitude": 37.76,
-                        "longitude": -122.4,
-                        "zoom": 11,
-                        "pitch": 50,
-                    },
-                    layers=selected_layers,
-                )
-            )
-        else:
-            st.error("Please choose at least one layer above.")
-    except URLError as e:
-        st.error(
-            """
-            **This demo requires internet access.**
+        for i in range(7):
+            p = [benchcycle+f",1,1,{10**i}"]
+            result, time_taken = pycr.evalcr(benchexpr, p)
+            compiled_time = pycr.benchmark(benchexpr, p)
+            data.append({
+                "Input Size": 10**i,
+                "CR Time (ms)": time_taken,
+                "Compiled Time (ms)": compiled_time,
+                "Delta (ms)": time_taken - compiled_time,
+                "Speedup" : compiled_time/time_taken if compiled_time > 0 else float('inf')
+            })
+    except:
+        streamlit.error("Error occurred during benchmarking!")
 
-            Connection error: %s
-        """
-            % e.reason
-        )
-
-def plotting_demo():
-    import streamlit as st
-    import time
-    import numpy as np
-
-    st.markdown(f'# {list(page_names_to_funcs.keys())[1]}')
-    st.write(
-        """
-        This demo illustrates a combination of plotting and animation with
-Streamlit. We're generating a bunch of random numbers in a loop for around
-5 seconds. Enjoy!
-"""
-    )
-
-    progress_bar = st.sidebar.progress(0)
-    status_text = st.sidebar.empty()
-    last_rows = np.random.randn(1, 1)
-    chart = st.line_chart(last_rows)
-
-    for i in range(1, 101):
-        new_rows = last_rows[-1, :] + np.random.randn(5, 1).cumsum(axis=0)
-        status_text.text("%i%% Complete" % i)
-        chart.add_rows(new_rows)
-        progress_bar.progress(i)
-        last_rows = new_rows
-        time.sleep(0.05)
-
-    progress_bar.empty()
-
-    # Streamlit widgets automatically run the script from top to bottom. Since
-    # this button is not connected to any other logic, it just causes a plain
-    # rerun.
-    st.button("Re-run")
+    df = pd.DataFrame(data)
+    streamlit.write("Benchmark Results:")
+    streamlit.dataframe(df)
+    streamlit.write(result[-1])
 
 
-def data_frame_demo():
-    import streamlit as st
-    import pandas as pd
-    import altair as alt
 
-    from urllib.error import URLError
+streamlit.header("Generation & Evaluation")
+streamlit.markdown("Input an expression and parameters in the form of $x,x_0,h,i_{max}$ delimited by spaces for multivariate expressions.")
+streamlit.sidebar.write("Documentation and use")
 
-    st.markdown(f"# {list(page_names_to_funcs.keys())[3]}")
-    st.write(
-        """
-        This demo shows how to use `st.write` to visualize Pandas DataFrames.
+col1, col2 = streamlit.columns(2)
+colexpr = col1.text_input("Expression: $f(x_1,x_2,\ldots)$")
+colparam = col2.text_input("Parameters: $p^*=\{p_1,p_2,\ldots\}$")
 
-(Data courtesy of the [UN Data Explorer](http://data.un.org/Explorer.aspx).)
-"""
-    )
-
-    @st.cache_data
-    def get_UN_data():
-        AWS_BUCKET_URL = "http://streamlit-demo-data.s3-us-west-2.amazonaws.com"
-        df = pd.read_csv(AWS_BUCKET_URL + "/agri.csv.gz")
-        return df.set_index("Region")
-
-    try:
-        df = get_UN_data()
-        countries = st.multiselect(
-            "Choose countries", list(df.index), ["China", "United States of America"]
-        )
-        if not countries:
-            st.error("Please select at least one country.")
-        else:
-            data = df.loc[countries]
-            data /= 1000000.0
-            st.write("### Gross Agricultural Production ($B)", data.sort_index())
-
-            data = data.T.reset_index()
-            data = pd.melt(data, id_vars=["index"]).rename(
-                columns={"index": "year", "value": "Gross Agricultural Product ($B)"}
-            )
-            chart = (
-                alt.Chart(data)
-                .mark_area(opacity=0.3)
-                .encode(
-                    x="year:T",
-                    y=alt.Y("Gross Agricultural Product ($B):Q", stack=None),
-                    color="Region:N",
-                )
-            )
-            st.altair_chart(chart, use_container_width=True)
-    except URLError as e:
-        st.error(
-            """
-            **This demo requires internet access.**
-
-            Connection error: %s
-        """
-            % e.reason
-        )
-
-page_names_to_funcs = {
-    "—": intro,
-    "Plotting Demo": plotting_demo,
-    "Mapping Demo": mapping_demo,
-    "DataFrame Demo": data_frame_demo
-}
-
-demo_name = st.sidebar.selectbox("Choose a demo", page_names_to_funcs.keys())
-page_names_to_funcs[demo_name]()
+if streamlit.button("Evaluate Expression"):
+    result, time_taken = pycr.evalcr(colexpr, colparam.split())
+    streamlit.write(f"Last Value: {result[-1]}, Time taken: {time_taken:.2f} ms")
+    code, time_taken = pycr.crgen(colexpr, colparam.split())
+    streamlit.code(code)
+    print("len:", len(code), "has_nul:", "\x00" in code, "first_nul_at:", code.find("\x00"))
+    if "\x00" in code:
+        i = code.find("\x00")
+        print(repr(code[max(0, i-20): i+20]))
