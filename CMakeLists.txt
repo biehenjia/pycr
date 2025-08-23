@@ -6,7 +6,6 @@ project(py_cr LANGUAGES CXX)
 set(CMAKE_VERBOSE_MAKEFILE ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-
 message(STATUS "CMAKE_BUILD_TYPE='${CMAKE_BUILD_TYPE}'")
 foreach(cfg IN ITEMS "" DEBUG RELEASE RELWITHDEBINFO MINSIZEREL)
   string(TOUPPER "${cfg}" U)
@@ -38,6 +37,12 @@ file(GLOB_RECURSE SOURCE_FILES CONFIGURE_DEPENDS
 
 # Compiled module will be py_cr/pycrlib.cpython-*.so
 pybind11_add_module(pycrlib ${SOURCE_FILES})
+
+target_compile_options(pycrlib PRIVATE
+  $<$<CONFIG:Release>:-O3 -DNDEBUG>
+)
+
+set_property(TARGET pycrlib PROPERTY INTERPROCEDURAL_OPTIMIZATION_RELEASE TRUE)
 
 target_include_directories(pycrlib PRIVATE
   ${CMAKE_CURRENT_SOURCE_DIR}/include
