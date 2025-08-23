@@ -285,6 +285,7 @@ void CRsum::print_tree() const
 
 std::string CRsum::genCode(size_t parent, size_t order, int place, std::string indent) const
 {
+    std::cout<<"THIS IS A NEW VERSION\n";
     std::string res;
 
     if (order != index)
