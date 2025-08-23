@@ -2,6 +2,14 @@
 
 #pragma once
 
+#ifdef PYCRLIB_ENFORCE_OPT
+  #if !defined(__OPTIMIZE__) || defined(__OPTIMIZE_SIZE__)
+    #error "Wheel build must be optimized (-O2/-O3)."
+  #endif
+  #ifndef NDEBUG
+    #error "Wheel build must define NDEBUG."
+  #endif
+#endif
 
 #include <vector>
 #include <algorithm>
