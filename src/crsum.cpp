@@ -287,7 +287,7 @@ std::string CRsum::genCode(size_t parent, size_t order, int place, std::string i
 {
     std::cout<<"THIS IS A NEW VERSION\n";
     std::string res;
-
+    std::cout<<order<< " " <<index<< std::endl;
     if (order != index)
     {
         for (size_t i = 0; i < operands.size(); ++i)
