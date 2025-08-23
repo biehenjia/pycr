@@ -1,7 +1,6 @@
 cmake_minimum_required(VERSION 3.18)
 project(py_cr LANGUAGES CXX)
 
-# Default to Release for single-config generators (Ninja/Makefiles)
 if(NOT CMAKE_CONFIGURATION_TYPES AND NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE Release CACHE STRING "Build type" FORCE)
 endif()
