@@ -359,7 +359,7 @@ void ASTnode::_creval()
         }
 
         // 3) advance the odometer
-        ssize_t i = paramsize;
+        long long i = paramsize;
         while (i >= 0) {
             ind[i]++;
             if (ind[i] < params[i]) {
