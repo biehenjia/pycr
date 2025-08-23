@@ -3,8 +3,7 @@ name: Build wheels
 on:
   push:
     branches: [ main ]
-    tags:
-      - "v*"  
+    tags: [ "v*" ]
   pull_request:
   workflow_dispatch:
 
@@ -13,34 +12,13 @@ permissions:
   id-token: write
 
 jobs:
-  build_wheels:
-    name: Build (${{ matrix.os }})
+  build:
+    name: cibuildwheel (${{ matrix.os }})
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-24.04, macos-14, windows-latest]
-
-    env:  
-      #py versions
-      #cp310-* cp311-*  
-      CIBW_BUILD: "cp312-*"
-      CIBW_SKIP: "pp* *musllinux*"
-
-      # architectures
-      CIBW_ARCHS_LINUX: "x86_64 aarch64"
-      CIBW_ARCHS_MACOS: "x86_64 arm64" 
-      CIBW_ARCHS_WINDOWS: "AMD64"
-
-      # manylinux policy
-      CIBW_MANYLINUX_X86_64: "manylinux_2_28"
-      CIBW_MANYLINUX_AARCH64: "manylinux_2_28"
-
-      # CIBW_TEST_REQUIRES: "pytest"
-      # CIBW_TEST_COMMAND: "pytest -q {project}/tests"
-
-      # Parallel CMake
-      CMAKE_BUILD_PARALLEL_LEVEL: "2"
+        os: [ ubuntu-22.04, macos-13, windows-latest ]
 
     steps:
       - uses: actions/checkout@v4
@@ -50,73 +28,27 @@ jobs:
           python-version: "3.12"
 
       - name: Install build tooling
-        run: |
-          python -m pip install --upgrade pip
-          pip install cibuildwheel build
+        run: python -m pip install -U pip build cibuildwheel==2.21.3
 
-      #sdist linux
-      - name: Build sdist
-        if: matrix.os == 'ubuntu-24.04'
-        run: python -m build --sdist
-      
-      - name: Set up QEMU (Linux)
+      - name: Build wheels
+        env:
+          CIBW_BUILD_VERBOSITY: "3"
+          CIBW_SKIP: "pp* *_i686 *musllinux*"
+          CIBW_ARCHS_LINUX: "x86_64"
+          CIBW_MANYLINUX_X86_64_IMAGE: "manylinux_2_28"
+        run: python -m cibuildwheel --output-dir dist
+
+      - name: Build sdist (once)
         if: runner.os == 'Linux'
-        uses: docker/setup-qemu-action@v3
-        with:
-          platforms: arm64
-      
-      - name: Build wheels with cibuildwheel
-        run: python -m cibuildwheel --output-dir wheelhouse
+        run: python -m build --sdist -o dist
 
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v4
         with:
           name: dist-${{ matrix.os }}
-          path: |
-            wheelhouse/*.whl
-            dist/*.tar.gz
-          if-no-files-found: ignore
-          retention-days: 14
-      
-      - name: Collect compile_commands.json (Linux only)
-        if: runner.os == 'Linux'
-        shell: bash
-        run: |
-          set -euxo pipefail
-          CCJSON=$(ls build/*/compile_commands.json 2>/dev/null | head -n1 || true)
-          if [ -n "${CCJSON:-}" ]; then
-            mkdir -p ccjson
-            cp -v "$CCJSON" ccjson/compile_commands.json
-            echo "Found compile_commands.json at $CCJSON"
-          else
-            echo "compile_commands.json not found; relying on -v Ninja logs"
-          fi
-      - name: Upload compile commands
-        if: runner.os == 'Linux' && hashFiles('ccjson/compile_commands.json') != ''
-        uses: actions/upload-artifact@v4
-        with:
-          name: compile-commands-linux
-          path: ccjson/compile_commands.json
-          retention-days: 7
+          path: dist/*
 
-  publish:
-    name: Publish to PyPI
-    needs: [build_wheels]
-    runs-on: ubuntu-24.04
-    steps:
-      - uses: actions/download-artifact@v4
-        with:
-          path: dist
-      - name: Gather files
-        shell: bash
-        run: |
-          mkdir -p upload
-          find dist -type f \( -name '*.whl' -o -name '*.tar.gz' \) -exec cp -v {} upload/ \;
-          ls -l upload
-      - name: Upload to PyPI (Trusted Publisher)
-        if: startsWith(github.ref, 'refs/tags/v')
+      - name: Publish to PyPI (Trusted Publisher)
+        if: startsWith(github.ref, 'refs/tags/v') && runner.os == 'Linux'
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
-          packages_dir: upload
-          # test
-          # repository-url: https://test.pypi.org/legacy/
+          packages_dir: dist

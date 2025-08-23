@@ -14,9 +14,10 @@ cmake.version = ">=3.26"
 ninja.version = ">=1.11"
 build-dir = "build/{wheel_tag}"
 wheel.packages = ["py_cr"]
+cmake.args = ["-DCMAKE_BUILD_TYPE=Release", "-DCMAKE_INTERPROCEDURAL_OPTIMIZATION=ON"]
 
-
+[tool.cibuildwheel]
+manylinux-x86_64-image = "manylinux_2_28"
 
 [tool.cibuildwheel.linux]
 build-verbosity = 3
-environment = { CMAKE_BUILD_TYPE="Release", CFLAGS="$CFLAGS -O3 -DNDEBUG", CXXFLAGS="$CXXFLAGS -O3 -DNDEBUG" }

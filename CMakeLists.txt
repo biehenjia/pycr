@@ -1,24 +1,18 @@
-message(STATUS "CMAKE_BUILD_TYPE='${CMAKE_BUILD_TYPE}'")
-
 cmake_minimum_required(VERSION 3.18)
 project(py_cr LANGUAGES CXX)
 
+# Default to Release for single-config generators (Ninja/Makefiles)
+if(NOT CMAKE_CONFIGURATION_TYPES AND NOT CMAKE_BUILD_TYPE)
+  set(CMAKE_BUILD_TYPE Release CACHE STRING "Build type" FORCE)
+endif()
+
 set(CMAKE_VERBOSE_MAKEFILE ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-
 message(STATUS "CMAKE_BUILD_TYPE='${CMAKE_BUILD_TYPE}'")
-foreach(cfg IN ITEMS "" DEBUG RELEASE RELWITHDEBINFO MINSIZEREL)
-  string(TOUPPER "${cfg}" U)
-  message(STATUS "CMAKE_CXX_FLAGS${cfg}: '${CMAKE_CXX_FLAGS${U}}'")
-endforeach()
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
-
-if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
-  set(CMAKE_BUILD_TYPE Release CACHE STRING "Build type" FORCE)
-endif()
 
 include(FetchContent)
 find_package(pybind11 CONFIG QUIET)
@@ -38,25 +32,29 @@ file(GLOB_RECURSE SOURCE_FILES CONFIGURE_DEPENDS
 # Compiled module will be py_cr/pycrlib.cpython-*.so
 pybind11_add_module(pycrlib ${SOURCE_FILES})
 
-target_compile_options(pycrlib PRIVATE
-  $<$<CONFIG:Release>:-O3 -DNDEBUG>
-)
-
-set_property(TARGET pycrlib PROPERTY INTERPROCEDURAL_OPTIMIZATION_RELEASE TRUE)
+# Unconditional optimization for the extension (avoid config drift)
+target_compile_definitions(pycrlib PRIVATE NDEBUG)
+if(MSVC)
+  target_compile_options(pycrlib PRIVATE /O2)
+else()
+  target_compile_options(pycrlib PRIVATE -O3 -fno-semantic-interposition)
+endif()
 
 target_include_directories(pycrlib PRIVATE
   ${CMAKE_CURRENT_SOURCE_DIR}/include
   ${CMAKE_CURRENT_SOURCE_DIR}/src
 )
 
+# Extra debug diagnostics only in Debug
 target_compile_definitions(pycrlib PRIVATE
   $<$<CONFIG:Debug>:PYBIND11_DETAILED_ERROR_MESSAGES>
 )
 
+# Enable IPO/LTO project-wide when supported
 include(CheckIPOSupported)
 check_ipo_supported(RESULT ipo_ok OUTPUT _ipo_msg)
 if(ipo_ok)
-  set_property(TARGET pycrlib PROPERTY INTERPROCEDURAL_OPTIMIZATION_RELEASE TRUE)
+  set(CMAKE_INTERPROCEDURAL_OPTIMIZATION ON)
 endif()
 
 # Put the extension inside the py_cr package in the wheel
