@@ -299,6 +299,7 @@ std::string CRsum::genCode(size_t parent, size_t order, int place, std::string i
     }
     else
     {
+        std::cout<<operands.size() <<std::endl;
         size_t n = operands.size();
         // loop header
         res += indent + "for i in range(" + std::to_string(n - 1) + "):\n";

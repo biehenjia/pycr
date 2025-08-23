@@ -20,7 +20,7 @@ or construct minimal python code
 
 '''
 
-e = "x^2+x^2+x^2+x^4+x^5+x^6+x^7+x^8"
+e = "x"
 params = ["x,1,1,1000000"]
 
 print(10000000.0**2+2*10000000+4)
