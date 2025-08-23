@@ -233,6 +233,7 @@ def delim(s):
     return ','.join(tokens)
 
 def evalcr(expr, *params):
+    il.clear()
     ils = []
     for p in params[0]:
         p = delim(p)
@@ -249,6 +250,7 @@ def evalcr(expr, *params):
     return result,1000*(time.perf_counter() - s)
 
 def crgen(expr, *params):
+    il.clear()
     ils = []
     for p in params[0]:
         p = delim(p)

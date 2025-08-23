@@ -310,7 +310,9 @@ std::string CRsum::genCode(size_t parent, long long order, long long place, std:
     {
         res += indent + crprefix + std::to_string(parent) + "[" + std::to_string(place) + "]=" + crprefix + std::to_string(crposition) + "[0]\n";
     }
-
+    fprintf(stderr, "[genCode:%s] len=%zu lines=%zu\n",
+        typeid(*this).name(), res.size(),
+        std::count(res.begin(), res.end(), '\n'));
     return res;
 }
 
