@@ -77,29 +77,21 @@ jobs:
           if-no-files-found: ignore
           retention-days: 14
       
-      - name: Locate compile_commands.json
+      - name: Collect compile_commands.json (Linux only)
+        if: runner.os == 'Linux'
         shell: bash
         run: |
           set -euxo pipefail
-          # Find the file produced by scikit-build/cmake
-          CCJSON=$(find . -name compile_commands.json | head -n1 || true)
-          echo "CCJSON=${CCJSON}" >> $GITHUB_ENV
+          CCJSON=$(ls build/*/compile_commands.json 2>/dev/null | head -n1 || true)
           if [ -n "${CCJSON:-}" ]; then
             mkdir -p ccjson
             cp -v "$CCJSON" ccjson/compile_commands.json
+            echo "Found compile_commands.json at $CCJSON"
           else
-            echo "compile_commands.json not found" >&2
-            exit 1
+            echo "compile_commands.json not found; relying on -v Ninja logs"
           fi
-
-      - name: Quick sanity grep (show first few compile commands)
-        if: env.CCJSON != ''
-        shell: bash
-        run: |
-          grep -Eo '"command":\s*"[^"]+"' ccjson/compile_commands.json | head -n 30 || true
-
       - name: Upload compile commands
-        if: env.CCJSON != ''
+        if: runner.os == 'Linux' && hashFiles('ccjson/compile_commands.json') != ''
         uses: actions/upload-artifact@v4
         with:
           name: compile-commands-linux
