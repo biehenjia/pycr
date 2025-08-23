@@ -15,9 +15,13 @@ ninja.version = ">=1.11"
 build-dir = "build/{wheel_tag}"
 wheel.packages = ["py_cr"]
 cmake.args = ["-DCMAKE_BUILD_TYPE=Release", "-DCMAKE_INTERPROCEDURAL_OPTIMIZATION=ON"]
+build.verbose = true
 
 [tool.cibuildwheel]
 manylinux-x86_64-image = "manylinux_2_28"
 
 [tool.cibuildwheel.linux]
 build-verbosity = 3
+
+[tool.cibuildwheel.config-settings]
+"build.verbose" = true
