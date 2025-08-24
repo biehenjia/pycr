@@ -20,16 +20,17 @@ or construct minimal python code
 
 '''
 
-e = "x+y"
-params = ["x,1,1,10","y,0,1,10"]
+e = "(x/1.1)^3+(x/1.2)^4-(x+1)^6-(x-1)^7"
+params = ["y,0,1,1000","x,0,1, 1000" ]
 
 print(10000000.0**2+2*10000000+4)
-code,t = pycr.crgen(e,params)
+code,t = pycr.evalcr(e,params)
 
-print(code)
+print(code[-1])
 print(f"{t} ms for code evaluation")
 
 results = [0] * 10000
+exit() 
 ncode = pycr.naiveinit(e,params)
 c_ncode = compile(ncode, "<generated>", "exec")
 start = time.perf_counter()

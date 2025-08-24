@@ -43,11 +43,16 @@ colexpr = col1.text_input("Expression: $f(x_1,x_2,\ldots)$")
 colparam = col2.text_input("Parameters: $p^*=\{p_1,p_2,\ldots\}$")
 
 if streamlit.button("Evaluate Expression"):
-    result, time_taken = pycr.evalcr(colexpr, colparam.split())
-    streamlit.write(f"Last Value: {result[-1]}, Time taken: {time_taken:.2f} ms")
-    code, time_taken = pycr.crgen(colexpr, colparam.split())
-    streamlit.code(code)
-    print("len:", len(code), "has_nul:", "\x00" in code, "first_nul_at:", code.find("\x00"))
-    if "\x00" in code:
-        i = code.find("\x00")
-        print(repr(code[max(0, i-20): i+20]))
+    try:
+        result, time_taken = pycr.evalcr(colexpr, colparam.split(";"))
+        print(colparam.split(";"))
+        print(result)
+        streamlit.write(f"Last Value: {result[-1]}, Time taken: {time_taken:.2f} ms")
+        code, time_taken = pycr.crgen(colexpr, colparam.split(";"))
+        streamlit.code(code)
+        print("len:", len(code), "has_nul:", "\x00" in code, "first_nul_at:", code.find("\x00"))
+        if "\x00" in code:
+            i = code.find("\x00")
+            print(repr(code[max(0, i-20): i+20]))
+    except:
+        streamlit.error("Error occurred during benchmarking!")
