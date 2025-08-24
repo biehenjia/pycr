@@ -8,10 +8,16 @@ endif()
 set(CMAKE_VERBOSE_MAKEFILE ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 message(STATUS "CMAKE_BUILD_TYPE='${CMAKE_BUILD_TYPE}'")
+message(STATUS "SYSTEM='${CMAKE_SYSTEM_NAME}' CXX_COMPILER_ID='${CMAKE_CXX_COMPILER_ID}'")
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+
+# For Pyodide/Emscripten, prevent pybind11 from probing the host CPython.
+if(EMSCRIPTEN)
+  set(PYBIND11_FINDPYTHON OFF CACHE BOOL "" FORCE)
+endif()
 
 include(FetchContent)
 find_package(pybind11 CONFIG QUIET)
@@ -28,32 +34,21 @@ file(GLOB_RECURSE SOURCE_FILES CONFIGURE_DEPENDS
   ${CMAKE_CURRENT_SOURCE_DIR}/bindings/*.cpp
 )
 
-# Compiled module will be py_cr/pycrlib.cpython-*.so
+# Compiled module will be py_cr/pycrlib.cpython-*.so|pyd
 pybind11_add_module(pycrlib ${SOURCE_FILES})
 
-
-# Unconditional optimization for the extension (avoid config drift)
-if (NOT EMSCRIPTEN)
+# Native optimizations only (leave Pyodide minimal; toolchain supplies link flags)
+if(NOT EMSCRIPTEN)
   target_compile_definitions(pycrlib PRIVATE NDEBUG)
   if(MSVC)
     target_compile_options(pycrlib PRIVATE /O2)
   else()
     target_compile_options(pycrlib PRIVATE -O3 -fno-semantic-interposition)
   endif()
+else()
+  # Pyodide/Emscripten: keep flags minimal; pyodide-build provides SIDE_MODULE, WASM features, etc.
+  target_compile_options(pycrlib PRIVATE -O3)
 endif()
-
-if(EMSCRIPTEN)
-  target_compile_options(pycrlib PRIVATE -O3 -fexceptions)
-  target_link_options(pycrlib PRIVATE
-    "-sSIDE_MODULE=2" 
-    "-sWASM_BIGINT" 
-  )
-  set(PYBIND11_FINDPYTHON OFF CACHE BOOL "" FORCE)
-
-endif()
-
-
-
 
 target_include_directories(pycrlib PRIVATE
   ${CMAKE_CURRENT_SOURCE_DIR}/include
@@ -65,11 +60,13 @@ target_compile_definitions(pycrlib PRIVATE
   $<$<CONFIG:Debug>:PYBIND11_DETAILED_ERROR_MESSAGES>
 )
 
-# Enable IPO/LTO project-wide when supported
-include(CheckIPOSupported)
-check_ipo_supported(RESULT ipo_ok OUTPUT _ipo_msg)
-if(ipo_ok)
-  set(CMAKE_INTERPROCEDURAL_OPTIMIZATION ON)
+# Enable IPO/LTO only for native builds
+if(NOT EMSCRIPTEN)
+  include(CheckIPOSupported)
+  check_ipo_supported(RESULT ipo_ok OUTPUT _ipo_msg)
+  if(ipo_ok)
+    set(CMAKE_INTERPROCEDURAL_OPTIMIZATION ON)
+  endif()
 endif()
 
 # Put the extension inside the py_cr package in the wheel
