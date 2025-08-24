@@ -14,31 +14,69 @@ permissions:
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
+
 jobs:
   build:
-    # ... your existing job ...
+    name: cibuildwheel (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ ubuntu-22.04, macos-13, windows-latest ]
+
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-python@v5
         with:
-          python-version: "3.12"
+          python-version: "3.12"   # used for sdist; cibuildwheel manages its own Pythons
+
       - name: Install build tooling
         run: python -m pip install -U pip build cibuildwheel==2.21.3
+
       - name: Build wheels
         env:
-          CIBW_BUILD_VERBOSITY: "3"
+          CIBW_BUILD: "cp38-* cp39-* cp310-* cp311-* cp312-*"
           CIBW_SKIP: "pp* *_i686 *musllinux*"
+          CIBW_BUILD_VERBOSITY: "3"
           CIBW_ARCHS_LINUX: "x86_64"
           CIBW_MANYLINUX_X86_64_IMAGE: "manylinux_2_28"
         run: python -m cibuildwheel --output-dir dist
+
       - name: Build sdist (Linux only)
         if: runner.os == 'Linux'
         run: python -m build --sdist -o dist
-      - uses: actions/upload-artifact@v4
-        with:
-          name: dist-native-${{ matrix.os }}     # <— renamed
-          path: dist/*
 
+      - name: Upload artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist-${{ matrix.os }}
+          path: dist/*
+          if-no-files-found: error
+          retention-days: 14
+
+  publish:
+    name: Publish to PyPI
+    needs: build
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: dist-*
+          merge-multiple: true
+          path: dist
+
+      - name: Publish (Trusted Publisher)
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          packages_dir: dist
+  
   pyodide:
     name: cibuildwheel (pyodide)
     runs-on: ubuntu-22.04
@@ -60,19 +98,3 @@ jobs:
         with:
           name: dist-pyodide
           path: dist/*pyodide_*_wasm32.whl
-
-  publish:
-    needs: [build]             # <— don’t depend on pyodide here
-    if: startsWith(github.ref, 'refs/tags/v')
-    runs-on: ubuntu-latest
-    steps:
-      - name: Download native artifacts only
-        uses: actions/download-artifact@v4
-        with:
-          pattern: dist-native-*
-          merge-multiple: true
-          path: dist
-      - name: Publish (Trusted Publisher)
-        uses: pypa/gh-action-pypi-publish@release/v1
-        with:
-          packages_dir: dist
