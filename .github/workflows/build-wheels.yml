@@ -91,7 +91,6 @@ jobs:
       - name: Build Pyodide wheel
         env:
           CIBW_PYODIDE_VERSION: "0.27.7"
-          CIBW_BUILD_VERBOSITY: "3"
           CIBW_TEST_REQUIRES_PYODIDE: "pytest"
           CIBW_TEST_SOURCES_PYODIDE: "tests"
           CIBW_TEST_COMMAND: "python -m pytest -q ./tests"
