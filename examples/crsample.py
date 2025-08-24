@@ -20,13 +20,13 @@ or construct minimal python code
 
 '''
 
-e = "x"
-params = ["x,1,1,1000000"]
+e = "x+y"
+params = ["x,1,1,10","y,0,1,10"]
 
 print(10000000.0**2+2*10000000+4)
-code,t = pycr.evalcr(e,params)
+code,t = pycr.crgen(e,params)
 
-# print(code)
+print(code)
 print(f"{t} ms for code evaluation")
 
 results = [0] * 10000

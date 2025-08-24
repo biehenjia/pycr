@@ -2,8 +2,6 @@ import streamlit
 import pandas as pd
 import pycr
 
-
-
 streamlit.title("Chains of Recurrences")
 streamlit.markdown("Chains of Recurrences (CR's) is an effective method to evaluate functions at regular intervals. For example, a common task is to evaluate $G(x_0 +ih),\\forall 0 \\leq i \\leq s$ for some $x_0,h,s$ in the purposes of: graph plotting, signal processing, activation function approximation, etc.")
 streamlit.markdown("This website serves as a demonstration of using CR's, built in `python` and `c++`.")
@@ -35,8 +33,6 @@ if streamlit.button("Benchmark Expression"):
     streamlit.write("Benchmark Results:")
     streamlit.dataframe(df)
     streamlit.write(result[-1])
-
-
 
 streamlit.header("Generation & Evaluation")
 streamlit.markdown("Input an expression and parameters in the form of $x,x_0,h,i_{max}$ delimited by spaces for multivariate expressions.")

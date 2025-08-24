@@ -133,7 +133,7 @@ std::string ASTnode::crgen()
         base += std::to_string(cr->fastvalues[i]) + delim;
     }
     base += "]\n";
-    res += base;
+    //res += base;
 
     std::string indexpos = "results";
     for (size_t i = 0; i < params.size(); ++i)
