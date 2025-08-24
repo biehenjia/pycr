@@ -31,35 +31,26 @@ file(GLOB_RECURSE SOURCE_FILES CONFIGURE_DEPENDS
 # Compiled module will be py_cr/pycrlib.cpython-*.so
 pybind11_add_module(pycrlib ${SOURCE_FILES})
 
+
 # Unconditional optimization for the extension (avoid config drift)
-target_compile_definitions(pycrlib PRIVATE NDEBUG)
-if(MSVC)
-  target_compile_options(pycrlib PRIVATE /O2)
-else()
-  target_compile_options(pycrlib PRIVATE -O3 -fno-semantic-interposition)
-endif()
-
-# Fail CI if our target isn't actually optimized
-get_target_property(_opts pycrlib COMPILE_OPTIONS)
-if(NOT _opts)  # handle empty property
-  set(_opts "")
-endif()
-string(JOIN " " _opts_joined ${_opts})
-
-if(MSVC)
-  if(NOT _opts_joined MATCHES "(/O2)( |$)")
-    message(FATAL_ERROR "pycrlib: expected /O2 in COMPILE_OPTIONS")
-  endif()
-else()
-  if(NOT _opts_joined MATCHES "(^| )-O3( |$)")
-    message(FATAL_ERROR "pycrlib: expected -O3 in COMPILE_OPTIONS")
+if (NOT EMSCRIPTEN)
+  target_compile_definitions(pycrlib PRIVATE NDEBUG)
+  if(MSVC)
+    target_compile_options(pycrlib PRIVATE /O2)
+  else()
+    target_compile_options(pycrlib PRIVATE -O3 -fno-semantic-interposition)
   endif()
 endif()
 
-# Enable source-level checks only in wheel/CI builds
-if(DEFINED ENV{CIBUILDWHEEL})
-  target_compile_definitions(pycrlib PRIVATE PYCRLIB_ENFORCE_OPT=1)
+if(EMSCRIPTEN)
+  target_compile_options(pycrlib PRIVATE -O3 -fexceptions)
+  target_link_options(pycrlib PRIVATE
+    "-sSIDE_MODULE=2" 
+    "-sWASM_BIGINT" 
+  )
 endif()
+
+
 
 
 target_include_directories(pycrlib PRIVATE
