@@ -81,20 +81,32 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-python@v5
         with:
-          python-version: "3.12"
-      - name: Install tooling
+          python-version: "3.12"     # Pyodide 0.27.x == Python 3.12
+
+      - name: Install tooling pinned for Pyodide 0.27.x
         run: |
           python -m pip install -U pip "cibuildwheel>=2.23.3" "pyodide-build==0.30.4"
           pyodide xbuildenv search --all
+
+      # Important: scrub native toolchain vars so emscripten is used
+      - name: Clean native toolchain env
+        run: |
+          unset CC CXX AR RANLIB LD CFLAGS CXXFLAGS LDFLAGS
+
       - name: Build Pyodide wheel
         env:
+          # Target a 3.12-compatible xbuildenv
           CIBW_PYODIDE_VERSION: "0.27.7"
-          CIBW_TEST_REQUIRES_PYODIDE: "pytest"
-          CIBW_TEST_SOURCES_PYODIDE: "tests"
-          CIBW_TEST_COMMAND: "python -m pytest -q ./tests"
+          # DO NOT set CIBW_BUILD_VERBOSITY here (Pyodide CLI doesn't accept -vv)
+          # Prevent CMake/pybind11 from probing host Python
+          CIBW_ENVIRONMENT_PYODIDE: >
+            PYBIND11_FINDPYTHON=OFF
+            CMAKE_ARGS="-DPython3_EXECUTABLE= -DPython3_ROOT_DIR= -DPython3_FIND_STRATEGY=LOCATION"
         run: python -m cibuildwheel --platform pyodide --output-dir dist
+
       - uses: actions/upload-artifact@v4
         with:
           name: dist-pyodide

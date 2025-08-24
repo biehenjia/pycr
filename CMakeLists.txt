@@ -48,6 +48,8 @@ if(EMSCRIPTEN)
     "-sSIDE_MODULE=2" 
     "-sWASM_BIGINT" 
   )
+  set(PYBIND11_FINDPYTHON OFF CACHE BOOL "" FORCE)
+
 endif()
 
 
