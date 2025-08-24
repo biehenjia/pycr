@@ -38,7 +38,6 @@ jobs:
         env:
           CIBW_BUILD: "cp38-* cp39-* cp310-* cp311-* cp312-*"
           CIBW_SKIP: "pp* *_i686 *musllinux*"
-          CIBW_BUILD_VERBOSITY: "3"
           CIBW_ARCHS_LINUX: "x86_64"
           CIBW_MANYLINUX_X86_64_IMAGE: "manylinux_2_28"
         run: python -m cibuildwheel --output-dir dist
