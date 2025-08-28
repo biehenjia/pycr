@@ -246,8 +246,9 @@ void ASTnode::_creval()
                 // shifting the next-up digit
                 //auto t3 = Clock::now();
                 crs[i-1]->shift(i-1);
+                std::cout<<"shift index: "<<i<<"\n";
                 //total_shift += Millis( Clock::now() - t3 ).count();
-
+                
                 // then copy it forward
                 //auto t4 = Clock::now();
                 crs[i] = crs[i-1]->copy();

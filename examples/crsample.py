@@ -20,8 +20,8 @@ or construct minimal python code
 
 '''
 
-e = "x*x"
-params = ["x,0,1,3"]
+e = "y+x"
+params = ["x,4,3,3", "y,2,1,3"]
 
 code,t = pycr.evalcr(e,params)
 

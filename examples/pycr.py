@@ -240,7 +240,7 @@ def evalcr(expr, *params):
         l = p.split(',')
         il[l[0]] = list(map(float,l[1:])) + [len(il)]
         ils.append(int(l[3])) 
-    print(ils)
+    print(il)
 
     ast = Parser(expr)
     cr = ast.parse()
