@@ -21,8 +21,7 @@ or construct minimal python code
 '''
 
 e = "y+x"
-params = ["x,4,3,3", "y,2,1,3"]
-
+params = [ "y,2,1,3","x,4,3,3"]
 code,t = pycr.evalcr(e,params)
 
 print(code)

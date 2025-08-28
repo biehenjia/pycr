@@ -204,7 +204,10 @@ void ASTnode::_creval()
             std::cout<<crs[paramsize]->fastvalues[i]<<" ";
         } std::cout<<"\n";
         // 1) push_back timing
-        
+        for (size_t i = 0; i < n; i++){
+            crs[i]->print_tree();
+            std::cout<<"\n";
+        }
         {
             //auto t0 = Clock::now();
             val = fastvalue[0];
