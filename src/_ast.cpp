@@ -100,10 +100,8 @@ void ASTnode::crinit(std::vector<size_t> p)
     cr->initialize();
     cr->print_tree();
     size_t k = 1;
+
     
-    for (size_t i = 0; i < cr->fastvalues.size(); i++){
-        std::cout<<cr->fastvalues[i]<<" ";
-    } std::cout<<"\n";
     
     for (auto v : p)
     {
@@ -343,6 +341,9 @@ void ASTnode::_creval()
     double* fastvalue = crs.back()->fastvalues.data();
     auto loop_start = Clock::now();
     while (true) {
+        for (size_t i = 0; i < crs[paramsize]->fastvalues.size(); i++){
+            std::cout<<crs[paramsize]->fastvalues[i]<<" ";
+        } std::cout<<"\n";
         // 1) push_back timing
         
         {
