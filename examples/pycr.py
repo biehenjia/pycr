@@ -243,7 +243,7 @@ def evalcr(expr, *params):
     ast = Parser(expr)
     cr = ast.parse()
     cr.crinit(ils)
-
+    cr
     s = time.perf_counter()
     result =  cr.creval()
 

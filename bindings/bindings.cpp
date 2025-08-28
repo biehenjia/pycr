@@ -9,16 +9,7 @@
 
 namespace py = pybind11;
 static std::string compiler() {
-#if defined(__clang__)
-  return "Clang " __clang_version__;
-#elif defined(__GNUC__)
-  return "GCC " __VERSION__;
-#elif defined(_MSC_VER)
-  return "MSVC " + std::to_string(_MSC_VER);
-#else
-  return "unknown";
-#endif
-}
+
 
 PYBIND11_MODULE(pycrlib, m) {
     m.doc() = "";
@@ -63,39 +54,5 @@ PYBIND11_MODULE(pycrlib, m) {
 
 
     
-    m.def("get_build_info", []{
-    py::dict d;
-#if defined(NDEBUG)
-    d["build_type"] = "Release";
-#else
-    d["build_type"] = "Debug";
-#endif
-#if defined(__OPTIMIZE__) || defined(_MSC_VER)
-    d["opt"] = "on";
-#else
-    d["opt"] = "off";
-#endif
-#if defined(__FAST_MATH__)
-    d["fast_math"] = true;
-#else
-    d["fast_math"] = false;
-#endif
-#if defined(__AVX512F)
-    d["avx512"] = true;
-#else
-    d["avx512"] = false;
-#endif
-#if defined(__AVX2__)
-    d["avx2"] = true;
-#else
-    d["avx2"] = false;
-#endif
-#if defined(__FMA__)
-    d["fma"] = true;
-#else
-    d["fma"] = false;
-#endif
-    d["compiler"] = compiler();
-    return d;
-});
+
 }

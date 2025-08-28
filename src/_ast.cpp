@@ -97,6 +97,7 @@ void ASTnode::crinit(std::vector<size_t> p)
     params = p;
     cr = crmake();
     cr->initialize();
+    cr->print_tree();
     size_t k = 1;
     
     for (auto v : p)

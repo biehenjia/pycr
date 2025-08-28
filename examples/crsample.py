@@ -21,12 +21,12 @@ or construct minimal python code
 '''
 
 e = "(x+y)^2-(x-y)^2"
-params = ["x,0,1,5"]
+params = ["x,0,1,5","y,0,1,5"]
 
 print(10000000.0**2+2*10000000+4)
-code,t = pycr.evalcr(e,params)
+code,t = pycr.crgen(e,params)
 
-print(code[-1])
+print(code)
 print(f"{t} ms for code evaluation")
 
 results = [0] * 10000
