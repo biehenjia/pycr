@@ -20,8 +20,8 @@ or construct minimal python code
 
 '''
 
-e = "(x/1.1)^3+(x/1.2)^4-(x+1)^6-(x-1)^7"
-params = ["y,0,1,1000","x,0,1, 1000" ]
+e = "(x+y)^2-(x-y)^2"
+params = ["x,0,1,5"]
 
 print(10000000.0**2+2*10000000+4)
 code,t = pycr.evalcr(e,params)
