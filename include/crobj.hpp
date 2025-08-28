@@ -86,7 +86,7 @@ class CRobj {
         std::string prepare( CRobj& root);
 
         std::vector<double> fastvalues;
-        std::vector<double> isanumber;
+        std::vector<int> isanumber;
         std::vector<bool> isnumbers;
 
         size_t length;

@@ -199,15 +199,23 @@ void ASTnode::_creval()
 
     double* fastvalue = crs.back()->fastvalues.data();
     auto loop_start = Clock::now();
+    // crs[0]->operands[0]->print_tree();
+    // std::cout<<crs[0]->operands[0]->index<<"\n";
+    // for (size_t i = 0; i < crs[0]->isanumber.size(); i++){ 
+    //     std::cout<<crs[0]->isanumber[i]<<" ";
+    // }
+    // std::cout<<"\n";
     while (true) {
-        for (size_t i = 0; i < crs[paramsize]->fastvalues.size(); i++){
-            std::cout<<crs[paramsize]->fastvalues[i]<<" ";
-        } std::cout<<"\n";
+        // for (size_t j = 0; j < n; j++){
+        //     for (size_t i = 0; i < crs[j]->fastvalues.size(); i++){
+        //         std::cout<<crs[j]->fastvalues[i]<<" ";
+        //     } std::cout<<"\n";
+        // }
+        // std::cout<<"done\n";
+        
         // 1) push_back timing
-        for (size_t i = 0; i < n; i++){
-            crs[i]->print_tree();
-            std::cout<<"\n";
-        }
+        
+        
         {
             //auto t0 = Clock::now();
             val = fastvalue[0];
@@ -249,7 +257,7 @@ void ASTnode::_creval()
                 // shifting the next-up digit
                 //auto t3 = Clock::now();
                 crs[i-1]->shift(i-1);
-                std::cout<<"shift index: "<<i<<"\n";
+                //std::cout<<"shift index: "<<i<<" first fastvalue "<<crs[i-1]->fastvalues[0]<<"\n";
                 //total_shift += Millis( Clock::now() - t3 ).count();
                 
                 // then copy it forward

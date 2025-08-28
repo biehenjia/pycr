@@ -27,7 +27,8 @@ class CRsum final: public CRobj {
         std::unique_ptr<CRobj> copy() const override;
 
         inline void shift(long long i ) noexcept override final {
-            if (index > i){
+            //std::cout<<"my index is: "<<index<< " the shifted index is "<<i<<"\n";
+            if (index > i){ 
                 for (size_t j = 0; j < isanumber.size(); j++){ 
                     operands[isanumber[j]]->shift(i);
                     fastvalues[isanumber[j]] = operands[isanumber[j]]->valueof();

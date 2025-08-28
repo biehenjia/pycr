@@ -23,6 +23,7 @@ bool CRobj::isnumber() const
     return false;
 }
 
+
 double CRobj::initialize()
 {
     if (initialized)
@@ -35,7 +36,7 @@ double CRobj::initialize()
 
     for (size_t i = 0; i < length; i++)
     {
-        if (operands[i]->isnumber())
+        if (!operands[i]->isnumber())
         {
             isanumber.push_back(i);
         }
@@ -44,6 +45,7 @@ double CRobj::initialize()
     }
     return valueof();
 }
+
 
 void CRobj::simplify()
 {
@@ -57,6 +59,7 @@ void CRobj::shift(long long index)
 {
     return;
 }
+
 
 std::string CRobj::prepare(CRobj &root)
 {
