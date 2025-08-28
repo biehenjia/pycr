@@ -8,7 +8,6 @@
 #include "_ast.hpp"
 
 namespace py = pybind11;
-static std::string compiler() {
 
 
 PYBIND11_MODULE(pycrlib, m) {
@@ -53,6 +52,5 @@ PYBIND11_MODULE(pycrlib, m) {
     .def(py::init<ut, std::shared_ptr<ASTnode>>(),py::arg("op"), py::arg("child"));
 
 
-        }
-
 }
+
