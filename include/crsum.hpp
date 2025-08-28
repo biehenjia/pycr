@@ -35,7 +35,7 @@ class CRsum final: public CRobj {
                 return;
             } else {
                 for (size_t j = 0; j < operands.size()-1; j++){ 
-                    fastvalues[i] += fastvalues[i+1];
+                    fastvalues[j] += fastvalues[j+1];
                 }
             }
 
