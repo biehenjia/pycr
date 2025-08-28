@@ -22,6 +22,7 @@ std::unique_ptr<CRobj> ASTnum::crmake()
 
 std::unique_ptr<CRobj> ASTbin::crmake()
 {
+    
     // std::cout<<"crmake on astbin called \n";
     std::unique_ptr<CRobj> result;
     auto crleft = left->crmake();
@@ -99,6 +100,10 @@ void ASTnode::crinit(std::vector<size_t> p)
     cr->initialize();
     cr->print_tree();
     size_t k = 1;
+    
+    for (size_t i = 0; i < cr->fastvalues.size(); i++){
+        std::cout<<cr->fastvalues[i]<<" ";
+    } std::cout<<"\n";
     
     for (auto v : p)
     {
@@ -339,7 +344,7 @@ void ASTnode::_creval()
     auto loop_start = Clock::now();
     while (true) {
         // 1) push_back timing
-
+        
         {
             //auto t0 = Clock::now();
             val = fastvalue[0];

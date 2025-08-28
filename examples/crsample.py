@@ -20,8 +20,8 @@ or construct minimal python code
 
 '''
 
-e = "x*x"
-params = ["x,0,1,5"]
+e = "x^3"
+params = ["x,0,1,3"]
 
 print(10000000.0**2+2*10000000+4)
 code,t = pycr.evalcr(e,params)
